@@ -3,8 +3,8 @@ package io.github.foundationgames.parry.config;
 import com.google.gson.Gson;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,7 +38,7 @@ public class ParryConfig {
         public double multiplier;
 
         public Item getItem() {
-            return Registry.ITEM.get(Identifier.tryParse(this.item));
+            return Registries.ITEM.get(Identifier.tryParse(this.item));
         }
     }
 }

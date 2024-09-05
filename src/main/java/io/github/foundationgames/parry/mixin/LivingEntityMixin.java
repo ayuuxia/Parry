@@ -11,6 +11,7 @@ import net.minecraft.item.SwordItem;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -23,7 +24,10 @@ public abstract class LivingEntityMixin extends Entity {
     @Shadow public abstract boolean isUsingItem();
     @Shadow public abstract boolean blockedByShield(DamageSource source);
 
+    @Unique
     private DamageSource parry$cachedSource;
+
+    @Unique
     private boolean parry$appearBlocking = false;
 
     @Inject(at = @At(value = "HEAD"), method = "isBlocking", cancellable = true)
@@ -34,12 +38,12 @@ public abstract class LivingEntityMixin extends Entity {
         }
     }
 
-    @Inject(at = @At(value = "HEAD"), method = "damage", cancellable = true)
+    @Inject(at = @At(value = "HEAD"), method = "damage")
     public void parry$cacheDamageSource(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         this.parry$cachedSource = source;
     }
 
-    @ModifyVariable(method = "damage", at = @At("HEAD"), index = 2)
+    @ModifyVariable(method = "damage", at = @At("HEAD"), index = 2, argsOnly = true)
     private float parry$applySwordBlockProtection(float old) {
         var item = this.activeItemStack.getItem();
         parry$appearBlocking = true;
@@ -50,7 +54,7 @@ public abstract class LivingEntityMixin extends Entity {
                 if(item == v.getItem()) multiplier = v.multiplier;
             }
             System.out.println(old +" into "+old * multiplier);
-            old *= multiplier;
+            old *= (float) multiplier;
         }
         parry$appearBlocking = false;
         return old;

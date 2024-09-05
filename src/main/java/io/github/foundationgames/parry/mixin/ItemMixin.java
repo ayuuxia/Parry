@@ -1,6 +1,7 @@
 package io.github.foundationgames.parry.mixin;
 
 import io.github.foundationgames.parry.Parry;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -34,7 +35,7 @@ public class ItemMixin {
     }
 
     @Inject(at = @At(value = "HEAD"), method = "getMaxUseTime", cancellable = true)
-    public void parry$applySwordUseTime(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
+    public void parry$applySwordUseTime(ItemStack stack, LivingEntity user, CallbackInfoReturnable<Integer> cir) {
         if(stack.getItem() instanceof SwordItem) {
             cir.setReturnValue(72000);
         }
